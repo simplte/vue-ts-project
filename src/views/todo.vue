@@ -10,6 +10,8 @@
         @on-save="handleSave"
         @on-edit="handleEdit"
         @on-cancel="handleCancel"
+        @on-saveType2="handleSave2"
+        @on-complete="complete"
       ></todo-item>
     </ul>
   </div>
@@ -18,6 +20,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import TodoItem from "../components/todo-item";
+import { State, Mutation } from "vuex-class";
 
 @Component({
   name: "todoPage",
@@ -27,23 +30,14 @@ import TodoItem from "../components/todo-item";
 })
 export default class todoPage extends Vue {
   public edittingIndex = -1;
-  public list = [
-    {
-      text: "学习ts",
-      complete: false
-    },
-    {
-      text: "学习node",
-      complete: false
-    },
-    {
-      text: "学习",
-      complete: false
-    }
-  ];
+  // vuex的使用
+  @State("todoList") public list;
+  @Mutation("updateList") public updateTodoList;
+  @Mutation("todoComplete") public todoItemComplete;
   public handleSave({ index, content }) {
     console.log(index, content);
-    this.list[index].text = content;
+    // this.list[index].text = content;
+    this.updateTodoList({ index, content });
     this.handleCancel();
   }
   public handleEdit(index) {
@@ -52,6 +46,15 @@ export default class todoPage extends Vue {
   }
   public handleCancel() {
     this.edittingIndex = -1;
+  }
+  public handleSave2({ index, content }) {
+    console.log(index, content);
+    this.list[index].text = content;
+    this.handleCancel();
+  }
+  public complete(index) {
+    this.todoItemComplete(index);
+    // this.list[index].complete = !this.list[index].complete;
   }
 }
 </script>
